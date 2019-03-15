@@ -25,21 +25,7 @@
         </style>
     </head>
     <body ng-app = "vinesApp" ng-controller="mainController">
-	<button type="button" 
-    name="btnScanBarcode" 
-    id="btnScanBarcode" 
-    style="height:56px;border-width:0px;"
-    onclick="javascript:startBarcodeScanner();">
-<img src="http://berrywing.com/images/barcode_2d.png" style="height: 50px; width: 50px">
-</button>
-
-<script>
-function startBarcodeScanner() 
-{    
-	alert("Using client JavaScript to start scanner.");
-	window.location.href = 'bwstw://startscanner?field=txtField2';
-}
-</script>
+	
         <!-- INDEX PAGE -->
         <div ng-show="index" >
             <div class="container center-align">
