@@ -21,7 +21,7 @@ app.controller('mainController',function($scope, $http, $timeout){
 			$scope.vineData = response.data.vines;
 			//$scope.feedBack = "Vines - ";
 		}, 	function errorCall(){
-			$scope.feedBack = "not working";
+			//$scope.feedBack = "not working";
 		}	
 				);
 	}
