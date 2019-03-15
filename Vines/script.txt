@@ -1,0 +1,383 @@
+/*
+	White Board - js 
+	Tariq & Mia
+*/
+
+
+var app = angular.module('whiteBoard', []);
+
+//functions
+app.controller('mainController',function($scope, $http, $timeout){
+	//create variables here
+	$scope.currentUser = "";
+	$scope.userType = "";
+	//ng show variables
+	$scope.index=true;
+	$scope.studentFeed=false;
+	$scope.lecturerFeed =false;
+
+	//Get the user list
+	$scope.userList = 'https://caab.sim.vuw.ac.nz/api/saiyadmoha/user_list.json';
+	$http.get($scope.userList)
+	.then(function successCall(response){
+		//Create array of user objects
+		$scope.userData = response.data.users;
+		$scope.feedBack = "users";
+	}, 	function errorCall(){
+		$scope.feedBack = "not working";
+	}	
+			);
+
+	//Gets the course list
+	$scope.courseList = 'https://caab.sim.vuw.ac.nz/api/saiyadmoha/course_directory.json';
+	$http.get($scope.courseList)
+	.then(function successCall(response){
+		$scope.courseData = response.data.courses;
+		$timeout(function () {
+			$('select').formSelect();
+		});
+		$scope.courseTest = "courses";
+	}, 	function errorCall(){
+		$scope.courseTest = "not working";
+	}	
+			);
+
+			
+	//Gets the assignment list
+	$scope.assignmentList = 'https://caab.sim.vuw.ac.nz/api/saiyadmoha/assignment_directory.json';
+	$http.get($scope.assignmentList)
+	.then(function successCall(response){
+		$scope.assignmentData = response.data.assignments;
+		$scope.assignmentTest = "assignments";
+	}, 	function errorCall(){
+		$scope.courseTest = "not working";
+	}	
+			);
+
+			
+	//Gets the association list
+	$scope.associationList = 'https://caab.sim.vuw.ac.nz/api/saiyadmoha/course_association_directory.json';
+	$http.get($scope.associationList)
+	.then(function successCall(response){
+		$scope.associationData = response.data.courseAssociations;
+		$scope.associationTest= "association";
+	}, 	function errorCall(){
+		$scope.courseTest = "not working";
+	}	
+			);
+
+
+	//Login function
+	$scope.loginFunction=function(){
+		//Goes through the user list, and checks if username,password and user type match a record
+		for(var i=0; i<=$scope.userData.length;i++){
+			if($scope.userName == $scope.userData[i].LoginName && $scope.password == $scope.userData[i].Password && $scope.type == $scope.userData[i].UserType){
+
+				//Sets the current user variable as this user (for later use)
+				$scope.currentUserID = $scope.userData[i].ID;
+				$scope.currentUserLoginName = $scope.userData[i].LoginName;
+				$scope.currentUserType = $scope.userData[i].UserType;
+
+				//Directs the user based on whether they are a student or lecturer
+				if($scope.currentUserType=="lecturer"){
+					$scope.TEST = $scope.userData[i].LoginName;
+					$scope.lecturerFeed=true; 
+					$scope.login=false;
+					$scope.initLecturerCourses();
+				}
+				else if($scope.currentUserType="student"){
+					$scope.studentFeed=true;
+					$scope.login=false;
+					$scope.initStudentCourses();
+					$scope.populateAddCourse();
+				}
+				break;	
+			}else{
+				$scope.found = "Please try again";
+			}
+		}	
+	};
+
+	
+	//Function to initialize courses that lecturer teaches
+	$scope.initLecturerCourses=function(){
+		$scope.lecturerCourseList = [];
+		//Goes through all courses and adds the ones being taught by current logged-in lecturer
+		for(var i=0; i<$scope.courseData.length;i++){
+			if($scope.currentUserID == $scope.courseData[i].LecturerID){					
+				$scope.lecturerCourseList.push($scope.courseData[i]);
+			}
+		}
+
+		//Used to refresh the dropdown menu
+		$timeout(function () {
+			$('select').formSelect();
+		});
+	};
+
+	//Function to initialize courses that student takes 
+	$scope.initStudentCourses=function(){
+		$scope.studentCourseList = [];
+		//goes through course associations to match current user id with an id in the associations
+		for(var i=0; i<$scope.associationData.length;i++){
+			if($scope.currentUserID == $scope.associationData[i].StudentID){
+				//if there's a match, go through all the courses, to match the course ID
+				for(var j=0; j<$scope.courseData.length;j++){
+					if($scope.associationData[i].CourseID == $scope.courseData[j].ID){
+						//if the course is found, add to list and break the loop
+						//goes back to the first loop, looking for more associations
+						$scope.studentCourseList.push($scope.courseData[j]);
+						break;
+					}
+				}	
+			}		
+		}
+	};
+
+
+	//Function to create course
+	$scope.courseToCreate =function(){
+
+		var createThis = {
+				ID: $scope.create_courseID, 
+				Name: $scope.create_courseName,  
+				Overview: $scope.create_courseOverview,
+				Year: $scope.create_year,
+				Trimester: $scope.create_trimester,
+				LectureTimes: $scope.create_lectureTimes,
+				LecturerID: $scope.currentUserID
+
+		};
+
+		$http.post('https://caab.sim.vuw.ac.nz/api/saiyadmoha/update.course_directory.json', createThis)
+		.then(function successCall(response){
+			alert("Y");
+		}, 	function errorCall(){
+			alert("N");
+		}	
+				);
+
+
+	};
+
+	
+	//Function to edit course
+	$scope.courseToEdit=function(c){
+		//Creates object to be updated
+		var dataObj = {
+				ID: c.ID, 
+				Name: c.Name,  
+				Overview: c.Overview,
+				Year: c.Year,
+				Trimester: c.Trimester,
+				LectureTimes: c.LectureTimes,
+				LecturerID: c.LecturerID
+
+		};
+		// This section will post new data to the JSON file on the server
+		var postCourseUpdate = $http.post("https://caab.sim.vuw.ac.nz/api/saiyadmoha/update.course_directory.json", dataObj)
+				.then(function successCall(response){
+					alert("Y");
+				}, 	function errorCall(){
+					alert("N");
+				}	
+						);
+
+	};
+
+	//Function to delete course
+	$scope.courseToDelete=function(deleteThis){
+
+		$scope.testing = deleteThis;
+		//Deletes all assignments for the course being deleted
+		for(var i=0; i<$scope.assignmentData.length;i++){
+			if(deleteThis.ID == $scope.assignmentData[i].CourseID){				
+				var deleteAssignmentForCourse = $http.delete('https://caab.sim.vuw.ac.nz/api/saiyadmoha/delete.assignment.'+$scope.assignmentData[i].ID+'.json');	
+			}
+		} 
+
+		//Deletes course association for the course being deleted
+		for(var i=0; i<$scope.associationData.length; i++){
+			if(deleteThis.ID == $scope.associationData [i].CourseID){			
+				var deleteAsso = $http.delete('https://caab.sim.vuw.ac.nz/api/saiyadmoha/delete.course_association.'+ $scope.associationData[i].ID +'.json');	
+			}
+		} 
+		//Deletes course
+		var del = $http.delete('https://caab.sim.vuw.ac.nz/api/saiyadmoha/delete.course.'+deleteThis.ID+'.json');		
+
+
+	};
+
+
+	//Function to create assignment
+	$scope.assignmentToCreate=function(){
+		$scope.assignmentNum = 0;
+		//Finds the highest ID number
+		for(var i=0; i<$scope.assignmentData.length; i++){
+			if($scope.assignmentData[i].ID > $scope.assignmentNum){			
+				$scope.assignmentNum = $scope.assignmentData[i].ID;
+			}
+		}
+		//Next ID number is highest + 1
+		$scope.assignmentNum = parseInt($scope.assignmentNum)+1;
+
+		var assignmentCreate = {
+				ID: $scope.assignmentNum, 
+				Name: $scope.create_assignmentName,  
+				Overview: $scope.create_assignmentOverview,
+				CourseID: $scope.selectedCourseToCreateAssignment.ID,
+				DueDate: $scope.create_dueDate
+
+		};
+		// This section will post new data to the JSON file on the server
+		var postAssignmentAdd = $http.post('https://caab.sim.vuw.ac.nz/api/saiyadmoha/update.assignment_directory.json', assignmentCreate);
+
+	};
+
+	
+
+	
+	//used to populate a list of assignments for a specific course
+	//Used in the dropdown menu when selecting an assignment
+	$scope.populateAssignments=function(){
+		$scope.populatedAssignmentList=[];
+		for(var i=0;i < $scope.assignmentData.length;i++){
+			if($scope.courseForAssignment.ID == $scope.assignmentData[i].CourseID){
+				$scope.populatedAssignmentList.push($scope.assignmentData[i]);
+			}
+		}
+		$timeout(function () {
+			$('select').formSelect();
+		});
+
+	};
+
+	//Function to edit Assignment
+	$scope.assignmentToEdit=function(a){
+		//Creates object to be updated
+		var dataObj = {
+				ID: a.ID, 
+				Name: a.Name,  
+				Overview: a.Overview,
+				CourseID: a.CourseID,
+				DueDate: a.DueDate 
+		};
+		// This section will post new data to the JSON file on the server
+		var postAssignmentUpdate = $http.post('https://caab.sim.vuw.ac.nz/api/saiyadmoha/update.assignment_directory.json', dataObj);
+		
+	};
+
+
+	//Function to delete Assignment
+	$scope.assignmentToDelete=function(a){
+		$http.delete('https://caab.sim.vuw.ac.nz/api/saiyadmoha/delete.assignment.'+a.ID+'.json');		
+	};
+
+
+	//Add course to student list and course association
+	$scope.addNewCourse=function(addThis){
+		//finds the highest id number
+		$scope.associationNum =0;
+		for(var i=0; i<$scope.associationData.length; i++){
+			if($scope.associationData[i].ID > $scope.associationNum){			
+				$scope.associationNum = $scope.associationData[i].ID;
+			}
+		}
+		// new ID number is highest + 1
+		$scope.associationNum = parseInt($scope.associationNum)+1;
+		var dataAsso = {
+				ID: $scope.associationNum, 
+				StudentID: $scope.currentUserID,  
+				CourseID: addThis.ID
+		};
+
+		$http.post(' https://caab.sim.vuw.ac.nz/api/saiyadmoha/update.course_association_directory.json', dataAsso);
+
+	};
+
+	//delete course from student list and course association
+	$scope.removeFromDirectory=function(c){
+		$scope.IDToRemove = null;
+		//finds the id of the course association
+		for(var i=0; i<$scope.associationData.length; i++){
+			if($scope.associationData[i].CourseID == c.ID){			
+				$scope.IDToRemove = $scope.associationData[i].ID;
+			}
+		}
+
+		$http.delete('https://caab.sim.vuw.ac.nz/api/saiyadmoha/delete.course_association.'+$scope.IDToRemove+'.json');		
+
+	};
+
+
+	//Function to populate a list of courses currently available for the student to select
+	$scope.populateAddCourse=function(){
+		$scope.coursesToAdd = [];
+		//make copy of full course directory
+		for(var j=0; j<$scope.courseData.length;j++){
+			$scope.coursesToAdd.push($scope.courseData[j]);
+		}
+		//go through the list and compare with student's current courses
+		for(var i=0; i<$scope.studentCourseList.length;i++){
+			for(var j=0; j<$scope.coursesToAdd.length;j++){
+				//If student already takes this course, remove it
+				if($scope.studentCourseList[i].ID == $scope.coursesToAdd[j].ID){
+					$scope.coursesToAdd.splice(j,1);
+				}
+			}			
+		}
+		//The remaining courses are those that the student currently doesn't do
+		$timeout(function () {
+			$('select').formSelect();
+		});
+
+	};
+
+	//Cancel all login input
+	$scope.cancelLogin=function(){
+		//$scope.currentUserID = null;
+		$scope.userName =null;
+		$scope.password =null;
+		$scope.type=null;
+	};
+	
+	//cancels all input
+	$scope.cancelCreateCourse=function(){
+		$scope.create_courseID = null;
+		$scope.create_courseName = null;
+		$scope.create_courseOverview  = null;
+		$scope.create_year 	= null;
+		$scope.create_trimester  = null;
+		$scope.create_lecturerID  = null;
+		$scope.create_lectureTimes = null;
+	};
+	
+	//cancels all input
+	$scope.cancelCreateAssignment=function(){
+		$scope.create_assignmentOverview = null;
+		$scope.create_dueDate = null;
+		$scope.create_assignmentName  = null;
+		$scope.create_assignmentD 	= null;
+
+	};
+	
+	//Sets everything to null to logout
+	$scope.logout=function(){
+		$scope.cancelLogin();
+		$scope.cancelCreateAssignment();
+		$scope.cancelCreateCourse();
+		$scope.cancelCreateAssignment();
+		$scope.coursesToAdd = [];
+		$scope.populatedAssignmentList=[];
+		$scope.studentCourseList = [];
+		$scope.lecturerCourseList = [];
+		$scope.currentUserID = null;
+		$scope.currentUserLoginName = null;
+		$scope.currentUserType = null;
+		$scope.studentFeed=false;
+		$scope.lecturerFeed=false;
+		$scope.index=true;
+	};
+
+
+});

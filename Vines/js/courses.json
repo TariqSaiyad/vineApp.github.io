@@ -1,0 +1,35 @@
+{"courses":[
+
+	{"ID":"COUR123",
+	"Name":"C# Programming",
+	"Overview":"Learn to how to write computer programs in C#.",
+	"Year":2018,
+	"Trimester":"1",
+	"LectureTimes":"Wednesday 10.30am",
+	"LecturerID":null},
+
+	{"ID":"COUR456",
+	"Name":"Systems Analysis and Design",
+	"Overview":"Learn to how to analysis system requirements and design a computer system.",
+	"Year":2018,
+	"Trimester":"1",
+	"LectureTimes":"Monday 9.00am",
+	"LecturerID":null},
+
+	{"ID":"COUR789",
+	"Name":"Search Algorithms",
+	"Overview":"Understand how search algorithms work on major social media platforms.",
+	"Year":2018,
+	"Trimester":"1",
+	"LectureTimes":"Thursday 1.30pm",
+	"LecturerID":null},
+
+	{"ID":"COURABC",
+	"Name":"Information Management",
+	"Overview":"Develop a understand of the techniques required to manage data in the modern world.",
+	"Year":2018,
+	"Trimester":"1",
+	"LectureTimes":"Friday 5.00pm",
+	"LecturerID":null}
+
+]}

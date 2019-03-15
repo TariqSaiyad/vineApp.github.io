@@ -1,0 +1,141 @@
+ <!DOCTYPE html>
+  <html>
+    <head>
+		<!--Import Google Icon Font-->
+		<link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+
+		<!--Import css-->
+		<link type="text/css" rel="stylesheet" href="css/materialize.css"  media="screen,projection"/>
+		
+
+		<!--Let browser know website is optimized for mobile-->
+		<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+		<meta name="description" content="Whiteboard">
+		<meta name="author" content="Tariq & Mia-2018">
+		<link rel="shortcut icon" type="image/x-icon" href="images/.." />
+		<!-- import angular -->
+		<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.9/angular.min.js"></script>
+
+		<title>Create assignment</title>
+	
+	<!-- CSS for background -->
+	<style>
+		
+		html { 
+			background: url(images/background1.jpg) no-repeat center center fixed; 
+			-webkit-background-size: cover;
+			-moz-background-size: cover;
+			-o-background-size: cover;
+			background-size: cover;
+		}
+
+	</style> 
+    </head>
+    <body ng-app = "whiteBoard" ng-controller="mainController">
+	<div class="main">
+
+	
+
+	<ul id="slide-out" class="sidenav sidenav-fixed">
+		<li>
+			<div class="user-view">
+				<div class="background">
+					<img src="images/purple.jpg">
+				</div>
+				<!-- <a href="#user"><img class="circle" src="images/yuna.jpg"></a>-->
+				<h5 class="white-text">WHITEBOARD</h5>
+				<span class="white-text name">Your name here</span>
+				<a href="#email"><span class="white-text email">your username here</span></a>
+			</div>
+		</li>
+		<li><a href="lecturer_feed.html" class="waves-effect waves-purple center-align">GO BACK</a></li>
+		<li><div class="divider"></div></li>
+		<!-- <li><a class="subheader">Subheader</a></li>-->
+		
+		<li><a class="waves-effect waves-light btn purple darken-4" href="index.html">Logout</a></li>
+	</ul>
+	<a href="#" data-target="slide-out" class="sidenav-trigger hide-on-large-only deep-purple-text"><i class="material-icons ">menu</i></a>
+
+
+	<!-- Navigation bar at the top --> 
+	<nav>
+		<div class="nav-wrapper purple darken-4" > 
+			<a href="#" class="brand-logo center">CREATE NEW ASSIGNMENT</a>
+		</div>
+	</nav> 
+
+	<!-- contains the content -->
+	<div class="form_container center-align  white-text" style="padding-top:50px">
+		<!-- use multiple rows to create a grid layout -->
+		<div class="row ">
+		<form id="createAssignmentForm">
+		
+			<div class="input-field col s12 white-text">
+				<!-- get data how? -->
+				<!-- course id selected here -->
+				<select class=" white-text">
+				<option value="" >Option 1</option>
+					<option value="1" >Option 1</option>
+					<option value="2">Option 2</option>
+					<option value="3">Option 3</option>
+				</select>
+				<label class=" white-text">Select course to add assignment to</label>
+			</div>
+		
+		  <div class="row ">
+			<div class="input-field col s3  ">
+			  <input id="assignmentID" type="number" class="validate white-text" ng-model="assignmentD" >
+			  <label class="white-text">Assignment ID</label>
+			</div>
+			<div class="input-field col s6">
+			  <input id="assignmentName" type="text" class="validate white-text" ng-model="assignmentName">
+			  <label class="white-text">Assignment Name</label>
+			</div>
+			<div class="input-field col s3">
+			  <input id="dueDate" type="date" class="validate white-text" ng-model="dueDate">
+			  <label class="white-text">Due Date</label>
+			</div>
+		  </div>
+		  
+		  <div class="row">
+			<div class="input-field col s12">
+			  <input id="assignmentOverview" type="text" class="validate white-text" ng-model="assignmentOverview">
+			  <label class="white-text" >Assignment Overview</label>
+			</div>
+		  </div>
+		  
+		  
+		   <div class="row">
+			<div class="input-field col s12 m6 ">
+				<a class="waves-effect waves-light btn-large green " href="#!" ng-click="createAssignment()">Create</a>
+			</div>
+			<div class="input-field col s12 m6">
+				<a class="waves-effect waves-light btn-large red" href="#!" onclick="cancel()" >Cancel</a>
+			</div>
+		  </div>
+		
+		</form>
+		
+		<!-- testing -->
+		<span class="white-text" ng-bind="year"></span>
+	  </div>
+
+	</div>
+
+		
+		<script>
+			//function to cancel by clearing all form fields
+			function cancel() {
+				document.getElementById("createAssignmentForm").reset();
+			}
+		</script>		
+	</div>
+	
+	<!--JavaScript at end of body for optimized loading-->
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.1.0/jquery.min.js"></script>
+		<script src="js/sidebar.js"></script>
+		<script type="text/javascript" src="js/materialize.min.js"></script>	
+		<script src="js/script.js"></script>
+	
+    </body>
+ </html>
