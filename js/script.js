@@ -19,7 +19,7 @@ app.controller('mainController',function($scope, $http, $timeout){
 		.then(function successCall(response){
 			//Create array of vine objects
 			$scope.vineData = response.data.vines;
-			$scope.feedBack = "Vines - ";
+			//$scope.feedBack = "Vines - ";
 		}, 	function errorCall(){
 			$scope.feedBack = "not working";
 		}	
