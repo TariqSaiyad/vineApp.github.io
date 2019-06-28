@@ -1,3 +1,8 @@
+# Vine App
+
+#### This is a prototype of a solution for tracking kiwifruit vines in orchards. This project was conceptualised during the 36 hour Agtech Hackathon. 
+
+
 <p align="center">
   <a href="http://materializecss.com/">
     <img src="http://materializecss.com/res/materialize.svg" width="150">
